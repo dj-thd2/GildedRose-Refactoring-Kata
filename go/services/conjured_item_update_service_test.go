@@ -58,6 +58,6 @@ func TestConjuredItemUpdateService_SellInIsDecreased(t *testing.T) {
     ) {
         item := models.NewItem(&models.ItemModel{"Conjured Mana Cake", -4, 0})
         conjuredItemUpdateService.UpdateQuality(item)
-        assert.Equal(t, -6, item.Model.SellIn)
+        assert.Equal(t, -5, item.Model.SellIn)
     })
 }

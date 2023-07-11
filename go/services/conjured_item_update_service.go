@@ -21,17 +21,15 @@ func (this ConjuredItemUpdateService) UpdateQuality(item *models.Item) error {
     item.Mutex.Lock()
     defer item.Mutex.Unlock()
 
-    itemModel := item.Model
-
-    if itemModel.SellIn <= 0 {
+    if item.Model.SellIn <= 0 {
         decrement *= 2
     }
-    if (itemModel.Quality - decrement) < 0 {
-        itemModel.Quality = 0
+    if (item.Model.Quality - decrement) < 0 {
+        item.Model.Quality = 0
     } else {
-        itemModel.Quality -= decrement
+        item.Model.Quality -= decrement
     }
-    itemModel.SellIn--
+    item.Model.SellIn--
 
     return nil
 }
