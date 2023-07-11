@@ -1,21 +1,26 @@
 # GO Starter
 
-- Run :
+- Run:
 
 ```shell
-go run texttest_fixture.go [<number-of-days>; default: 2]
+make run
 ```
 
-- Run tests :
-
+- OpenAPI Swagger API:
 ```shell
-go test ./...
+make run
 ```
 
-- Run tests and coverage :
+Go to http://localhost:8080/swagger/index.html
+
+- Run unit tests and coverage:
 
 ```shell
-go test ./... -coverprofile=coverage.out
+make unit-test
+```
 
-go tool cover -html=coverage.out
+- Run texttest tests:
+
+```shell
+make texttest
 ```
