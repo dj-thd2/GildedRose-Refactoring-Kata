@@ -9,6 +9,7 @@ import (
     "github.com/emilybache/gildedrose-refactoring-kata/lib"
 )
 
+// Test /swagger/index.html should return 200
 func TestSwagger(t *testing.T) {
     runTestCase(t, func(
         handler lib.RequestHandler,

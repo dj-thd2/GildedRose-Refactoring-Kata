@@ -5,6 +5,8 @@ import (
     "github.com/emilybache/gildedrose-refactoring-kata/lib"
 )
 
+// Route setup for SwaggerController
+
 type SwaggerRoutes struct {
     logger             lib.Logger
     handler            lib.RequestHandler

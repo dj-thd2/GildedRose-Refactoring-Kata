@@ -5,6 +5,8 @@ import (
     cors "github.com/rs/cors/wrapper/gin"
 )
 
+// Middleware to add CORS headers
+
 type CorsMiddleware struct {
     handler lib.RequestHandler
     logger  lib.Logger

@@ -7,14 +7,20 @@ import (
     "github.com/spf13/cobra"
 )
 
+// Main serve command
+
+// Generic interface
 type ServeCommand struct{}
 
+// Short description of the command
 func (this *ServeCommand) Short() string {
     return "serve application"
 }
 
+// Setup method called on initialization
 func (this *ServeCommand) Setup(command *cobra.Command) {}
 
+// Command handler
 func (this *ServeCommand) Run() lib.CommandRunner {
     return func(
         middleware middlewares.Middlewares,
@@ -23,9 +29,10 @@ func (this *ServeCommand) Run() lib.CommandRunner {
         route routes.Routes,
         logger lib.Logger,
     ) {
-        logger.Info("Init")
+        logger.Info("Init middleware and routes")
         middleware.Setup()
         route.Setup()
+
         logger.Info("Running server")
         if env.ServerPort == "" {
             _ = requestHandler.Gin.Run()

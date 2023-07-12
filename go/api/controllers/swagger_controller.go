@@ -10,16 +10,19 @@ import (
     "github.com/gin-gonic/gin"
 )
 
+// SwaggerController properties
 type SwaggerController struct {
     logger   lib.Logger
 }
 
+// Instantiate a SwaggerController
 func NewSwaggerController(logger lib.Logger) SwaggerController {
     return SwaggerController{
         logger:  logger,
     }
 }
 
+// Setup SwaggerController routes
 func (this *SwaggerController) Setup(engine *gin.Engine) {
     docs.SwaggerInfo.Title = "Gilded Rose Service"
     docs.SwaggerInfo.Description = "This service implements the Gilded Rose item update service."

@@ -10,6 +10,7 @@ import (
     "github.com/emilybache/gildedrose-refactoring-kata/lib"
 )
 
+// Test /status should return 200
 func TestStatus(t *testing.T) {
     runTestCase(t, func(
         handler lib.RequestHandler,
@@ -22,6 +23,7 @@ func TestStatus(t *testing.T) {
     })
 }
 
+// Test /notfoundurl should return 404
 func TestNotFound(t *testing.T) {
     runTestCase(t, func(
         handler lib.RequestHandler,
@@ -33,6 +35,7 @@ func TestNotFound(t *testing.T) {
     })
 }
 
+// Test /update_quality with invalid JSON in POST data should return 400
 func TestInvalidItem(t *testing.T) {
     runTestCase(t, func(
         handler lib.RequestHandler,
@@ -47,6 +50,8 @@ func TestInvalidItem(t *testing.T) {
     })
 }
 
+// Test /update_quality with valid JSON in POST data should return 200
+// We skip unit testing for the logic as it should be already covered in service unit tests
 func TestValidItem(t *testing.T) {
     runTestCase(t, func(
         handler lib.RequestHandler,

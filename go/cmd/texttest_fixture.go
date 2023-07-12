@@ -11,14 +11,20 @@ import (
     "github.com/spf13/cobra"
 )
 
+// CLI texttest fixture command
+
+// Generic interface
 type TextTestFixtureCommand struct{}
 
+// Short description of the command
 func (this *TextTestFixtureCommand) Short() string {
     return "execute texttest fixture"
 }
 
+// Setup method called on initialization
 func (this *TextTestFixtureCommand) Setup(command *cobra.Command) {}
 
+// Command handler
 func (this *TextTestFixtureCommand) Run() lib.CommandRunner {
     return func(
         env                          lib.Env,

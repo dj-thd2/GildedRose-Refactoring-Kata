@@ -6,6 +6,7 @@ import (
     "github.com/emilybache/gildedrose-refactoring-kata/models"
 )
 
+// Properties
 type ItemUpdateServiceProvider struct {
     logger                          lib.Logger
     normalItemUpdateService         NormalItemUpdateService
@@ -15,6 +16,7 @@ type ItemUpdateServiceProvider struct {
     conjuredItemUpdateService       ConjuredItemUpdateService
 }
 
+// Instantiate a new ItemUpdateServiceProvider
 func NewItemUpdateServiceProvider(
     logger                          lib.Logger,
     normalItemUpdateService         NormalItemUpdateService,
@@ -34,17 +36,21 @@ func NewItemUpdateServiceProvider(
     }
 }
 
+// Implement GetUpdateService method to return a different ItemUpdateService implementation depending on the item kind
 func (this ItemUpdateServiceProvider) GetUpdateService(item *models.Item) domains.ItemUpdateService {
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
     switch item.Model.Name {
         case "Aged Brie":
-            return this.agedBrieItemUpdateService
+            return &this.agedBrieItemUpdateService
         case "Backstage passes to a TAFKAL80ETC concert":
-            return this.backstagePassItemUpdateService
+            return &this.backstagePassItemUpdateService
         case "Sulfuras, Hand of Ragnaros":
-            return this.sulfurasItemUpdateService
+            return &this.sulfurasItemUpdateService
         case "Conjured Mana Cake":
-            return this.conjuredItemUpdateService
+            return &this.conjuredItemUpdateService
         default:
-            return this.normalItemUpdateService
+            return &this.normalItemUpdateService
     }
 }

@@ -6,6 +6,8 @@ import (
     "github.com/gin-gonic/gin"
 )
 
+// Middleware to force a specific Content-Type header
+
 type ContentTypeFilterMiddleware struct {
     logger  lib.Logger
 }

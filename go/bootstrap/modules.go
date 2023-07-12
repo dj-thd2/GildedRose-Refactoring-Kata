@@ -9,6 +9,7 @@ import (
     "go.uber.org/fx"
 )
 
+// Define modules for dependency injection
 var CommonModules = fx.Options(
     controllers.Module,
     middlewares.Module,
