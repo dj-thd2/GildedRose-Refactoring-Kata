@@ -95,16 +95,11 @@ func (this *ItemController) postUpdateQuality(ctx *gin.Context) {
     }
 
     // Call UpdateQuality for each item of the array, as many times as defined in request.Days
-    // For performance reasons it would be more optimal to create a new method which receive
-    // the number of days as a parameter, so instead of update the item for each day, we could
-    // calculate directly the number of days passed and multiply by the needed increase or decrease of
-    // quality according to the intervals but we keep compliancy with the original method
-    for day := 0; day < request.Days; day++ {
-        for _, item := range items {
-            // Get ItemUpdateService for that specific item and call its UpdateQuality method
-            itemUpdateService := this.itemUpdateServiceProvider.GetUpdateService(item)
-            itemUpdateService.UpdateQuality(item)
-        }
+    // For performance reasons we implemented a method to directly calculate the final values instead of cycle through each day
+    for _, item := range items {
+        // Get ItemUpdateService for that specific item and call its UpdateQuality method with the specified number of days
+        itemUpdateService := this.itemUpdateServiceProvider.GetUpdateService(item)
+        itemUpdateService.UpdateQualityForDays(item, request.Days)
     }
 
     // Generate a ItemModel array of the objects with the actual data, to be returned as a reply
