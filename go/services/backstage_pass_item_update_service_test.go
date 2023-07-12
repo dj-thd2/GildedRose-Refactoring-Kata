@@ -202,7 +202,7 @@ func TestBackstagePassItemUpdateService_MultipleDays_QualityNotHigherThan50(t *t
     runTestCase(t, func(
         backstagePassItemUpdateService BackstagePassItemUpdateService,
     ) {
-        item := models.NewItem(&models.ItemModel{"Backstage passes to a TAFKAL80ETC concert", 2, 47})
+        item := models.NewItem(&models.ItemModel{"Backstage passes to a TAFKAL80ETC concert", 3, 47})
         days := 2
         backstagePassItemUpdateService.UpdateQualityForDays(item, days)
         assert.Equal(t, 50, item.Model.Quality)
