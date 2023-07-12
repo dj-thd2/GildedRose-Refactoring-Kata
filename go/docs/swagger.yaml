@@ -2,13 +2,14 @@ definitions:
   controllers.UpdateQualityRequest:
     properties:
       days:
-        minimum: 0
+        minimum: 1
         type: integer
       items:
         items:
           $ref: '#/definitions/models.ItemModel'
         type: array
     required:
+    - days
     - items
     type: object
   models.ItemModel:

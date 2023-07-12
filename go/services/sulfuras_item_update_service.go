@@ -16,6 +16,10 @@ func NewSulfurasItemUpdateService(logger lib.Logger) SulfurasItemUpdateService {
 }
 
 func (this SulfurasItemUpdateService) UpdateQuality(item *models.Item) error {
+    return this.UpdateQualityForDays(item, 1)
+}
+
+func (this SulfurasItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error {
     item.Mutex.Lock()
     defer item.Mutex.Unlock()
 
