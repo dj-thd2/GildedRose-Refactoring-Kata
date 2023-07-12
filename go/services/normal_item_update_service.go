@@ -42,5 +42,21 @@ func (this NormalItemUpdateService) UpdateQuality(item *models.Item) error {
 }
 
 func (this NormalItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error {
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
+    // The quality will decrement by 1 unit in normal conditions for each day
+    decrement := 1
+
+    // Calculate total decrement
+    decrement *= days
+
+    // Apply decrement to quality
+    item.Model.Quality -= decrement
+
+    // Decrement sellIn date
+    item.Model.SellIn -= days
+
+    // Return no errors
     return nil
 }
