@@ -27,5 +27,12 @@ func (this SulfurasItemUpdateService) UpdateQuality(item *models.Item) error {
 }
 
 func (this SulfurasItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error {
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
+    // The item quality is always set to 80 for the Sulfuras item
+    item.Model.Quality = 80
+
+    // Return no errors
     return nil
 }
