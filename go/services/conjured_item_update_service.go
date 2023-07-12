@@ -40,3 +40,11 @@ func (this ConjuredItemUpdateService) UpdateQuality(item *models.Item) error {
     // Return no errors
     return nil
 }
+
+func (this ConjuredItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error {
+    for i := 0; i < days; i++ {
+        this.UpdateQuality(item)
+    }
+
+    return nil
+}
