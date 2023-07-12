@@ -13,6 +13,7 @@ type ItemUpdateServiceProvider struct {
     agedBrieItemUpdateService       AgedBrieItemUpdateService
     backstagePassItemUpdateService  BackstagePassItemUpdateService
     sulfurasItemUpdateService       SulfurasItemUpdateService
+    conjuredItemUpdateService       ConjuredItemUpdateService
 }
 
 // Instantiate a new ItemUpdateServiceProvider
@@ -22,6 +23,7 @@ func NewItemUpdateServiceProvider(
     agedBrieItemUpdateService       AgedBrieItemUpdateService,
     backstagePassItemUpdateService  BackstagePassItemUpdateService,
     sulfurasItemUpdateService       SulfurasItemUpdateService,
+    conjuredItemUpdateService       ConjuredItemUpdateService,
 ) domains.ItemUpdateServiceProvider {
 
     return ItemUpdateServiceProvider{
@@ -30,6 +32,7 @@ func NewItemUpdateServiceProvider(
         agedBrieItemUpdateService:       agedBrieItemUpdateService,
         backstagePassItemUpdateService:  backstagePassItemUpdateService,
         sulfurasItemUpdateService:       sulfurasItemUpdateService,
+        conjuredItemUpdateService:       conjuredItemUpdateService,
     }
 }
 
@@ -45,6 +48,8 @@ func (this ItemUpdateServiceProvider) GetUpdateService(item *models.Item) domain
             return &this.backstagePassItemUpdateService
         case "Sulfuras, Hand of Ragnaros":
             return &this.sulfurasItemUpdateService
+        case "Conjured Mana Cake":
+            return &this.conjuredItemUpdateService
         default:
             return &this.normalItemUpdateService
     }

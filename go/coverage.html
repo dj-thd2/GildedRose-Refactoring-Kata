@@ -63,11 +63,13 @@
 				
 				<option value="file3">github.com/emilybache/gildedrose-refactoring-kata/services/backstage_pass_item_update_service.go (100.0%)</option>
 				
-				<option value="file4">github.com/emilybache/gildedrose-refactoring-kata/services/item_update_service_provider.go (100.0%)</option>
+				<option value="file4">github.com/emilybache/gildedrose-refactoring-kata/services/conjured_item_update_service.go (100.0%)</option>
 				
-				<option value="file5">github.com/emilybache/gildedrose-refactoring-kata/services/normal_item_update_service.go (100.0%)</option>
+				<option value="file5">github.com/emilybache/gildedrose-refactoring-kata/services/item_update_service_provider.go (100.0%)</option>
 				
-				<option value="file6">github.com/emilybache/gildedrose-refactoring-kata/services/sulfuras_item_update_service.go (100.0%)</option>
+				<option value="file6">github.com/emilybache/gildedrose-refactoring-kata/services/normal_item_update_service.go (100.0%)</option>
+				
+				<option value="file7">github.com/emilybache/gildedrose-refactoring-kata/services/sulfuras_item_update_service.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -357,6 +359,60 @@ func (this BackstagePassItemUpdateService) UpdateQualityForDays(item *models.Ite
 		<pre class="file" id="file4" style="display: none">package services
 
 import (
+    "github.com/emilybache/gildedrose-refactoring-kata/lib"
+    "github.com/emilybache/gildedrose-refactoring-kata/models"
+)
+
+type ConjuredItemUpdateService struct {
+    logger     lib.Logger
+    utils      lib.Utils
+}
+
+func NewConjuredItemUpdateService(logger lib.Logger, utils lib.Utils) ConjuredItemUpdateService <span class="cov8" title="1">{
+    return ConjuredItemUpdateService{
+        logger:     logger,
+        utils:      utils,
+    }
+}</span>
+
+func (this ConjuredItemUpdateService) UpdateQuality(item *models.Item) error <span class="cov8" title="1">{
+    return this.UpdateQualityForDays(item, 1)
+}</span>
+
+func (this ConjuredItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error <span class="cov8" title="1">{
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
+    // The quality will decrement by 2 units in normal conditions for each day
+    normalDecrement := 2
+
+    // Calculate days to pass before SellIn date
+    passedDaysBeforeSellIn := this.utils.Max(this.utils.Min(days, item.Model.SellIn), 0)
+
+    // Calculate days to pass after SellIn date
+    passedDaysAfterSellIn := days - passedDaysBeforeSellIn
+
+    // Calculate total decrement
+    decrement := (normalDecrement * passedDaysBeforeSellIn) + (2 * normalDecrement * passedDaysAfterSellIn)
+
+    // Apply decrement to quality
+    if (item.Model.Quality - decrement) &lt; 0 </span><span class="cov8" title="1">{
+        item.Model.Quality = 0
+    }</span> else<span class="cov8" title="1"> {
+        item.Model.Quality -= decrement
+    }</span>
+
+    // Decrement sellIn date
+    <span class="cov8" title="1">item.Model.SellIn -= days
+
+    // Return no errors
+    return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package services
+
+import (
     "github.com/emilybache/gildedrose-refactoring-kata/domains"
     "github.com/emilybache/gildedrose-refactoring-kata/lib"
     "github.com/emilybache/gildedrose-refactoring-kata/models"
@@ -369,6 +425,7 @@ type ItemUpdateServiceProvider struct {
     agedBrieItemUpdateService       AgedBrieItemUpdateService
     backstagePassItemUpdateService  BackstagePassItemUpdateService
     sulfurasItemUpdateService       SulfurasItemUpdateService
+    conjuredItemUpdateService       ConjuredItemUpdateService
 }
 
 // Instantiate a new ItemUpdateServiceProvider
@@ -378,6 +435,7 @@ func NewItemUpdateServiceProvider(
     agedBrieItemUpdateService       AgedBrieItemUpdateService,
     backstagePassItemUpdateService  BackstagePassItemUpdateService,
     sulfurasItemUpdateService       SulfurasItemUpdateService,
+    conjuredItemUpdateService       ConjuredItemUpdateService,
 ) domains.ItemUpdateServiceProvider <span class="cov8" title="1">{
 
     return ItemUpdateServiceProvider{
@@ -386,6 +444,7 @@ func NewItemUpdateServiceProvider(
         agedBrieItemUpdateService:       agedBrieItemUpdateService,
         backstagePassItemUpdateService:  backstagePassItemUpdateService,
         sulfurasItemUpdateService:       sulfurasItemUpdateService,
+        conjuredItemUpdateService:       conjuredItemUpdateService,
     }
 }</span>
 
@@ -401,13 +460,15 @@ func (this ItemUpdateServiceProvider) GetUpdateService(item *models.Item) domain
             return &amp;this.backstagePassItemUpdateService</span>
         case "Sulfuras, Hand of Ragnaros":<span class="cov8" title="1">
             return &amp;this.sulfurasItemUpdateService</span>
+        case "Conjured Mana Cake":<span class="cov8" title="1">
+            return &amp;this.conjuredItemUpdateService</span>
         default:<span class="cov8" title="1">
             return &amp;this.normalItemUpdateService</span>
     }
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package services
+		<pre class="file" id="file6" style="display: none">package services
 
 import (
     "github.com/emilybache/gildedrose-refactoring-kata/lib"
@@ -461,7 +522,7 @@ func (this NormalItemUpdateService) UpdateQualityForDays(item *models.Item, days
 }
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package services
+		<pre class="file" id="file7" style="display: none">package services
 
 import (
     "github.com/emilybache/gildedrose-refactoring-kata/lib"

@@ -55,3 +55,15 @@ func TestItemUpdateServiceProvider_SulfurasItem(t *testing.T) {
         assert.Equal(t, true, ok)
     })
 }
+
+// Conjured item should use a ConjuredItemUpdateService
+func TestItemUpdateServiceProvider_ConjuredItem(t *testing.T) {
+    runTestCase(t, func(
+        itemUpdateServiceProvider domains.ItemUpdateServiceProvider,
+    ) {
+        item := models.NewItem(&models.ItemModel{"Conjured Mana Cake", 5, 5})
+        updateServiceProvider := itemUpdateServiceProvider.GetUpdateService(item);
+        _, ok := updateServiceProvider.(*ConjuredItemUpdateService)
+        assert.Equal(t, true, ok)
+    })
+}

@@ -7,5 +7,6 @@ var Module = fx.Options(
     fx.Provide(NewAgedBrieItemUpdateService),
     fx.Provide(NewBackstagePassItemUpdateService),
     fx.Provide(NewSulfurasItemUpdateService),
+    fx.Provide(NewConjuredItemUpdateService),
     fx.Provide(NewItemUpdateServiceProvider),
 )
