@@ -107,7 +107,7 @@ func TestNormalItemUpdateService_11Days_QualityAfterSellIn10Days(t *testing.T) {
 }
 
 // If the sellIn date has been passed, the Normal item quality decrements in 2
-func TestNormalItemUpdateService_QualityAfterSellIn4Days(t *testing.T) {
+func TestNormalItemUpdateService_5Days_QualityAfterSellIn4Days(t *testing.T) {
     runTestCase(t, func(
         normalItemUpdateService NormalItemUpdateService,
     ) {
@@ -120,7 +120,7 @@ func TestNormalItemUpdateService_QualityAfterSellIn4Days(t *testing.T) {
 }
 
 // Quality must not be lower than 0
-func TestNormalItemUpdateService_QualityNotLowerThan0(t *testing.T) {
+func TestNormalItemUpdateService_3Days_QualityNotLowerThan0(t *testing.T) {
     runTestCase(t, func(
         normalItemUpdateService NormalItemUpdateService,
     ) {
@@ -133,7 +133,7 @@ func TestNormalItemUpdateService_QualityNotLowerThan0(t *testing.T) {
 }
 
 // sellIn date must decrease
-func TestNormalItemUpdateService_SellInIsDecreased(t *testing.T) {
+func TestNormalItemUpdateService_8Days_SellInIsDecreased(t *testing.T) {
     runTestCase(t, func(
         normalItemUpdateService NormalItemUpdateService,
     ) {
