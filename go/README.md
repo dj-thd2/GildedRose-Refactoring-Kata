@@ -11,7 +11,9 @@ make run
 make run
 ```
 
-Go to http://localhost:8080/swagger/index.html
+Then go to http://localhost:8080/swagger/index.html
+
+See documentation: [OpenAPI specification (swagger)](docs/swagger.yaml)
 
 - Run unit tests and coverage:
 
