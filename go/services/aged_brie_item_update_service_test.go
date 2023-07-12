@@ -99,7 +99,7 @@ func TestAgedBrieItemUpdateService_11Days_QualityAfterSellIn10Days(t *testing.T)
         item := models.NewItem(&models.ItemModel{"Aged Brie", 10, 10})
         days := 11
         agedBrieItemUpdateService.UpdateQualityForDays(item, days)
-        assert.Equal(t, 28, item.Model.Quality, "Quality should increase in 10 until expired and in 2 the last day resulting in +12 total")
+        assert.Equal(t, 22, item.Model.Quality, "Quality should increase in 10 until expired and in 2 the last day resulting in +12 total")
         assert.Equal(t, -1, item.Model.SellIn, "SellIn date should result in -1")
     })
 }
