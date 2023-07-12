@@ -19,7 +19,7 @@ type ItemController struct {
 
 // Model for POST request for /update_quality endpoint
 type UpdateQualityRequest struct {
-    Days   int                    `json:"days" binding:"gte=0"`
+    Days   int                    `json:"days" binding:"required,gte=1"`
     Items  []*models.ItemModel    `json:"items" binding:"required"`
 }
 
