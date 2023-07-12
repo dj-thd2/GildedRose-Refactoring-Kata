@@ -9,4 +9,7 @@ import (
 type ItemUpdateService interface {
     // Update item quality for 1 day
     UpdateQuality(item *models.Item) error
+
+    // Update item quality for n days
+    UpdateQualityForDays(item *models.Item, days int) error
 }

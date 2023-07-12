@@ -40,3 +40,7 @@ func (this AgedBrieItemUpdateService) UpdateQuality(item *models.Item) error {
     // Return no errors
     return nil
 }
+
+func (this AgedBrieItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error {
+    return nil
+}

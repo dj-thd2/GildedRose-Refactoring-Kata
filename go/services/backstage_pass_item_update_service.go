@@ -48,3 +48,7 @@ func (this BackstagePassItemUpdateService) UpdateQuality(item *models.Item) erro
     // Return no errors
     return nil
 }
+
+func (this BackstagePassItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error {
+    return nil
+}

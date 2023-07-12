@@ -25,3 +25,7 @@ func (this SulfurasItemUpdateService) UpdateQuality(item *models.Item) error {
     // Return no errors
     return nil
 }
+
+func (this SulfurasItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error {
+    return nil
+}
