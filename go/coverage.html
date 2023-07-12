@@ -1,0 +1,587 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>controllers: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/emilybache/gildedrose-refactoring-kata/api/controllers/item_controller.go (100.0%)</option>
+				
+				<option value="file1">github.com/emilybache/gildedrose-refactoring-kata/api/controllers/swagger_controller.go (100.0%)</option>
+				
+				<option value="file2">github.com/emilybache/gildedrose-refactoring-kata/services/aged_brie_item_update_service.go (100.0%)</option>
+				
+				<option value="file3">github.com/emilybache/gildedrose-refactoring-kata/services/backstage_pass_item_update_service.go (100.0%)</option>
+				
+				<option value="file4">github.com/emilybache/gildedrose-refactoring-kata/services/conjured_item_update_service.go (100.0%)</option>
+				
+				<option value="file5">github.com/emilybache/gildedrose-refactoring-kata/services/item_update_service_provider.go (100.0%)</option>
+				
+				<option value="file6">github.com/emilybache/gildedrose-refactoring-kata/services/normal_item_update_service.go (100.0%)</option>
+				
+				<option value="file7">github.com/emilybache/gildedrose-refactoring-kata/services/sulfuras_item_update_service.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package controllers
+
+import (
+    "net/http"
+
+    "github.com/emilybache/gildedrose-refactoring-kata/domains"
+    "github.com/emilybache/gildedrose-refactoring-kata/models"
+    "github.com/emilybache/gildedrose-refactoring-kata/lib"
+    "github.com/emilybache/gildedrose-refactoring-kata/api/middlewares"
+    "github.com/gin-gonic/gin"
+)
+
+// ItemController properties
+type ItemController struct {
+    logger                       lib.Logger
+    contentTypeFilterMiddleware  middlewares.ContentTypeFilterMiddleware
+    itemUpdateServiceProvider    domains.ItemUpdateServiceProvider
+}
+
+// Model for POST request for /update_quality endpoint
+type UpdateQualityRequest struct {
+    Days   int                    `json:"days" binding:"required,gte=1"`
+    Items  []*models.ItemModel    `json:"items" binding:"required"`
+}
+
+// Instantiate an ItemController
+func NewItemController(
+    logger                       lib.Logger,
+    contentTypeFilterMiddleware  middlewares.ContentTypeFilterMiddleware,
+    itemUpdateServiceProvider    domains.ItemUpdateServiceProvider,
+) ItemController <span class="cov8" title="1">{
+    return ItemController{
+        logger:                       logger,
+        contentTypeFilterMiddleware:  contentTypeFilterMiddleware,
+        itemUpdateServiceProvider:    itemUpdateServiceProvider,
+    }
+}</span>
+
+// Setup ItemController routes
+func (this *ItemController) Setup(engine *gin.Engine) <span class="cov8" title="1">{
+    engine.GET("/status", this.getStatus)
+    engine.POST("/update_quality", this.contentTypeFilterMiddleware.Handler("application/json"), this.postUpdateQuality)
+    engine.NoRoute(this.invalidPath)
+}</span>
+
+
+// This method will be called for all the paths not covered by any route to return a 404 Not Found
+func (this *ItemController) invalidPath(ctx *gin.Context) <span class="cov8" title="1">{
+    ctx.AbortWithStatus(http.StatusNotFound)
+}</span>
+
+// API Endpoints
+
+// getStatus godoc
+// @Summary Health check (get status)
+// @Schemes
+// @Description Return a simple OK response
+// @Tags health
+// @Accept json
+// @Produce json
+// @Success 200 "Service is up and running"
+// @Router /status [get]
+func (this *ItemController) getStatus(ctx *gin.Context) <span class="cov8" title="1">{
+    ctx.JSON(http.StatusOK, gin.H{
+        "status": "ok",
+    })
+}</span>
+
+// postUpdateQuality godoc
+// @Summary Execute Update Quality for all given items and passed days
+// @Schemes
+// @Description Load a full list of items that will be handled by the service and process them, returning the item list with the updated values for the given days
+// @Tags items
+// @Accept json
+// @Param message body UpdateQualityRequest true "Items info"
+// @Success 200 "Result of items with updated quality"
+// @Failure 400 "Invalid data in the request"
+// @Router /update_quality [post]
+func (this *ItemController) postUpdateQuality(ctx *gin.Context) <span class="cov8" title="1">{
+
+    // Request data
+    var request UpdateQualityRequest
+
+    if err := ctx.BindJSON(&amp;request); err != nil </span><span class="cov8" title="1">{
+        ctx.AbortWithStatus(http.StatusBadRequest)
+        return
+    }</span>
+
+    // Instantiate Item objects from the items got from the request
+    // Item objects have an ItemModel object with the actual data and a Mutex to synchronize concurrent access
+    // As we use pointers, it should not introduce too much overhead
+    <span class="cov8" title="1">var items = make([]*models.Item, len(request.Items))
+    for i, item := range request.Items </span><span class="cov8" title="1">{
+        items[i] = models.NewItem(item)
+    }</span>
+
+    // Call UpdateQuality for each item of the array, as many times as defined in request.Days
+    // For performance reasons we implemented a method to directly calculate the final values instead of cycle through each day
+    <span class="cov8" title="1">for _, item := range items </span><span class="cov8" title="1">{
+        // Get ItemUpdateService for that specific item and call its UpdateQuality method with the specified number of days
+        itemUpdateService := this.itemUpdateServiceProvider.GetUpdateService(item)
+        itemUpdateService.UpdateQualityForDays(item, request.Days)
+    }</span>
+
+    // Generate a ItemModel array of the objects with the actual data, to be returned as a reply
+    // As we use pointers, it should not introduce too much overhead
+    <span class="cov8" title="1">var itemEntities = make([]*models.ItemModel, len(items))
+    for i, item := range items </span><span class="cov8" title="1">{
+        itemEntities[i] = item.Model
+    }</span>
+
+    <span class="cov8" title="1">ctx.JSON(http.StatusOK, itemEntities)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package controllers
+
+import (
+    docs "github.com/emilybache/gildedrose-refactoring-kata/docs"
+    swaggerfiles "github.com/swaggo/files"
+    ginSwagger "github.com/swaggo/gin-swagger"
+
+    "github.com/emilybache/gildedrose-refactoring-kata/lib"
+
+    "github.com/gin-gonic/gin"
+)
+
+// SwaggerController properties
+type SwaggerController struct {
+    logger   lib.Logger
+}
+
+// Instantiate a SwaggerController
+func NewSwaggerController(logger lib.Logger) SwaggerController <span class="cov8" title="1">{
+    return SwaggerController{
+        logger:  logger,
+    }
+}</span>
+
+// Setup SwaggerController routes
+func (this *SwaggerController) Setup(engine *gin.Engine) <span class="cov8" title="1">{
+    docs.SwaggerInfo.Title = "Gilded Rose Service"
+    docs.SwaggerInfo.Description = "This service implements the Gilded Rose item update service."
+    docs.SwaggerInfo.Version = "1.0"
+    docs.SwaggerInfo.BasePath = "/"
+
+    engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package services
+
+import (
+    "github.com/emilybache/gildedrose-refactoring-kata/lib"
+    "github.com/emilybache/gildedrose-refactoring-kata/models"
+)
+
+type AgedBrieItemUpdateService struct {
+    logger     lib.Logger
+    utils      lib.Utils
+}
+
+func NewAgedBrieItemUpdateService(logger lib.Logger, utils lib.Utils) AgedBrieItemUpdateService <span class="cov8" title="1">{
+    return AgedBrieItemUpdateService{
+        logger:   logger,
+        utils:    utils,
+    }
+}</span>
+
+func (this AgedBrieItemUpdateService) UpdateQuality(item *models.Item) error <span class="cov8" title="1">{
+    return this.UpdateQualityForDays(item, 1)
+}</span>
+
+func (this AgedBrieItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error <span class="cov8" title="1">{
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
+    // The quality will increment by 1 unit in normal conditions for each day
+    normalIncrement := 1
+
+    // Calculate days to pass before SellIn date
+    passedDaysBeforeSellIn := this.utils.Max(this.utils.Min(days, item.Model.SellIn), 0)
+
+    // Calculate days to pass after SellIn date
+    passedDaysAfterSellIn := days - passedDaysBeforeSellIn
+
+    // Calculate total decrement
+    increment := (normalIncrement * passedDaysBeforeSellIn) + (2 * normalIncrement * passedDaysAfterSellIn)
+
+    // Apply increment to quality
+    if (item.Model.Quality + increment) &gt; 50 </span><span class="cov8" title="1">{
+        item.Model.Quality = 50
+    }</span> else<span class="cov8" title="1"> {
+        item.Model.Quality += increment
+    }</span>
+
+    // Decrement sellIn date
+    <span class="cov8" title="1">item.Model.SellIn -= days
+
+    // Return no errors
+    return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package services
+
+import (
+    "github.com/emilybache/gildedrose-refactoring-kata/lib"
+    "github.com/emilybache/gildedrose-refactoring-kata/models"
+)
+
+type BackstagePassItemUpdateService struct {
+    logger     lib.Logger
+    utils      lib.Utils
+}
+
+func NewBackstagePassItemUpdateService(logger lib.Logger, utils lib.Utils) BackstagePassItemUpdateService <span class="cov8" title="1">{
+    return BackstagePassItemUpdateService{
+        logger:     logger,
+        utils:      utils,
+    }
+}</span>
+
+func (this BackstagePassItemUpdateService) UpdateQuality(item *models.Item) error <span class="cov8" title="1">{
+    return this.UpdateQualityForDays(item, 1)
+}</span>
+
+func (this BackstagePassItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error <span class="cov8" title="1">{
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
+    // If final sellIn date is 0 or negative, quality is set to 0
+    if (item.Model.SellIn - days) &lt; 0 </span><span class="cov8" title="1">{
+        item.Model.Quality = 0
+    }</span> else<span class="cov8" title="1"> {
+        // The quality will increment by 1 unit in normal conditions for each day
+        normalIncrement := 1
+
+        // Calculate days to pass before SellIn date
+        passedDaysBeforeSellIn := this.utils.Max(this.utils.Min(days, item.Model.SellIn), 0)
+
+        // Increment 1 for each day until sellIn date
+        increment := normalIncrement * passedDaysBeforeSellIn
+
+        // Calculate final sellIn value
+        finalSellIn := item.Model.SellIn - passedDaysBeforeSellIn
+
+        // Last 10 days increments a extra unit (total 2 units)
+        if finalSellIn &lt; 10 </span><span class="cov8" title="1">{
+            increment += normalIncrement * this.utils.Min(10 - finalSellIn, passedDaysBeforeSellIn)
+        }</span>
+
+        // Last 5 days increments a extra unit (total 3 units)
+        <span class="cov8" title="1">if finalSellIn &lt; 5 </span><span class="cov8" title="1">{
+            increment += normalIncrement * this.utils.Min(5 - finalSellIn, passedDaysBeforeSellIn)
+        }</span>
+
+        // Apply increment to quality
+        <span class="cov8" title="1">if (item.Model.Quality + increment) &gt; 50 </span><span class="cov8" title="1">{
+            item.Model.Quality = 50
+        }</span> else<span class="cov8" title="1"> {
+            item.Model.Quality += increment
+        }</span>
+    }
+
+    // Decrement sellIn date
+    <span class="cov8" title="1">item.Model.SellIn -= days
+
+    // Return no errors
+    return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package services
+
+import (
+    "github.com/emilybache/gildedrose-refactoring-kata/lib"
+    "github.com/emilybache/gildedrose-refactoring-kata/models"
+)
+
+type ConjuredItemUpdateService struct {
+    logger     lib.Logger
+    utils      lib.Utils
+}
+
+func NewConjuredItemUpdateService(logger lib.Logger, utils lib.Utils) ConjuredItemUpdateService <span class="cov8" title="1">{
+    return ConjuredItemUpdateService{
+        logger:     logger,
+        utils:      utils,
+    }
+}</span>
+
+func (this ConjuredItemUpdateService) UpdateQuality(item *models.Item) error <span class="cov8" title="1">{
+    return this.UpdateQualityForDays(item, 1)
+}</span>
+
+func (this ConjuredItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error <span class="cov8" title="1">{
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
+    // The quality will decrement by 2 units in normal conditions for each day
+    normalDecrement := 2
+
+    // Calculate days to pass before SellIn date
+    passedDaysBeforeSellIn := this.utils.Max(this.utils.Min(days, item.Model.SellIn), 0)
+
+    // Calculate days to pass after SellIn date
+    passedDaysAfterSellIn := days - passedDaysBeforeSellIn
+
+    // Calculate total decrement
+    decrement := (normalDecrement * passedDaysBeforeSellIn) + (2 * normalDecrement * passedDaysAfterSellIn)
+
+    // Apply decrement to quality
+    if (item.Model.Quality - decrement) &lt; 0 </span><span class="cov8" title="1">{
+        item.Model.Quality = 0
+    }</span> else<span class="cov8" title="1"> {
+        item.Model.Quality -= decrement
+    }</span>
+
+    // Decrement sellIn date
+    <span class="cov8" title="1">item.Model.SellIn -= days
+
+    // Return no errors
+    return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package services
+
+import (
+    "github.com/emilybache/gildedrose-refactoring-kata/domains"
+    "github.com/emilybache/gildedrose-refactoring-kata/lib"
+    "github.com/emilybache/gildedrose-refactoring-kata/models"
+)
+
+// Properties
+type ItemUpdateServiceProvider struct {
+    logger                          lib.Logger
+    normalItemUpdateService         NormalItemUpdateService
+    agedBrieItemUpdateService       AgedBrieItemUpdateService
+    backstagePassItemUpdateService  BackstagePassItemUpdateService
+    sulfurasItemUpdateService       SulfurasItemUpdateService
+    conjuredItemUpdateService       ConjuredItemUpdateService
+}
+
+// Instantiate a new ItemUpdateServiceProvider
+func NewItemUpdateServiceProvider(
+    logger                          lib.Logger,
+    normalItemUpdateService         NormalItemUpdateService,
+    agedBrieItemUpdateService       AgedBrieItemUpdateService,
+    backstagePassItemUpdateService  BackstagePassItemUpdateService,
+    sulfurasItemUpdateService       SulfurasItemUpdateService,
+    conjuredItemUpdateService       ConjuredItemUpdateService,
+) domains.ItemUpdateServiceProvider <span class="cov8" title="1">{
+
+    return ItemUpdateServiceProvider{
+        logger:                          logger,
+        normalItemUpdateService:         normalItemUpdateService,
+        agedBrieItemUpdateService:       agedBrieItemUpdateService,
+        backstagePassItemUpdateService:  backstagePassItemUpdateService,
+        sulfurasItemUpdateService:       sulfurasItemUpdateService,
+        conjuredItemUpdateService:       conjuredItemUpdateService,
+    }
+}</span>
+
+// Implement GetUpdateService method to return a different ItemUpdateService implementation depending on the item kind
+func (this ItemUpdateServiceProvider) GetUpdateService(item *models.Item) domains.ItemUpdateService <span class="cov8" title="1">{
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
+    switch item.Model.Name </span>{
+        case "Aged Brie":<span class="cov8" title="1">
+            return &amp;this.agedBrieItemUpdateService</span>
+        case "Backstage passes to a TAFKAL80ETC concert":<span class="cov8" title="1">
+            return &amp;this.backstagePassItemUpdateService</span>
+        case "Sulfuras, Hand of Ragnaros":<span class="cov8" title="1">
+            return &amp;this.sulfurasItemUpdateService</span>
+        case "Conjured Mana Cake":<span class="cov8" title="1">
+            return &amp;this.conjuredItemUpdateService</span>
+        default:<span class="cov8" title="1">
+            return &amp;this.normalItemUpdateService</span>
+    }
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package services
+
+import (
+    "github.com/emilybache/gildedrose-refactoring-kata/lib"
+    "github.com/emilybache/gildedrose-refactoring-kata/models"
+)
+
+type NormalItemUpdateService struct {
+    logger     lib.Logger
+    utils      lib.Utils
+}
+
+func NewNormalItemUpdateService(logger lib.Logger, utils lib.Utils) NormalItemUpdateService <span class="cov8" title="1">{
+    return NormalItemUpdateService{
+        logger:     logger,
+        utils:      utils,
+    }
+}</span>
+
+func (this NormalItemUpdateService) UpdateQuality(item *models.Item) error <span class="cov8" title="1">{
+    return this.UpdateQualityForDays(item, 1)
+}</span>
+
+func (this NormalItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error <span class="cov8" title="1">{
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
+    // The quality will decrement by 1 unit in normal conditions for each day
+    normalDecrement := 1
+
+    // Calculate days to pass before SellIn date
+    passedDaysBeforeSellIn := this.utils.Max(this.utils.Min(days, item.Model.SellIn), 0)
+
+    // Calculate days to pass after SellIn date
+    passedDaysAfterSellIn := days - passedDaysBeforeSellIn
+
+    // Calculate total decrement
+    decrement := (normalDecrement * passedDaysBeforeSellIn) + (2 * normalDecrement * passedDaysAfterSellIn)
+
+    // Apply decrement to quality
+    if (item.Model.Quality - decrement) &lt; 0 </span><span class="cov8" title="1">{
+        item.Model.Quality = 0
+    }</span> else<span class="cov8" title="1"> {
+        item.Model.Quality -= decrement
+    }</span>
+
+    // Decrement sellIn date
+    <span class="cov8" title="1">item.Model.SellIn -= days
+
+    // Return no errors
+    return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package services
+
+import (
+    "github.com/emilybache/gildedrose-refactoring-kata/lib"
+    "github.com/emilybache/gildedrose-refactoring-kata/models"
+)
+
+type SulfurasItemUpdateService struct {
+    logger     lib.Logger
+}
+
+func NewSulfurasItemUpdateService(logger lib.Logger) SulfurasItemUpdateService <span class="cov8" title="1">{
+    return SulfurasItemUpdateService{
+        logger:     logger,
+    }
+}</span>
+
+func (this SulfurasItemUpdateService) UpdateQuality(item *models.Item) error <span class="cov8" title="1">{
+    return this.UpdateQualityForDays(item, 1)
+}</span>
+
+func (this SulfurasItemUpdateService) UpdateQualityForDays(item *models.Item, days int) error <span class="cov8" title="1">{
+    item.Mutex.Lock()
+    defer item.Mutex.Unlock()
+
+    // The item quality is always set to 80 for the Sulfuras item
+    item.Model.Quality = 80
+
+    // Return no errors
+    return nil
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
