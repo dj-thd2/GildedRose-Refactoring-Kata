@@ -16,22 +16,27 @@ func NewNormalItemUpdateService(logger lib.Logger) NormalItemUpdateService {
 }
 
 func (this NormalItemUpdateService) UpdateQuality(item *models.Item) error {
-    decrement := 1
-
     item.Mutex.Lock()
     defer item.Mutex.Unlock()
 
-    itemModel := item.Model
+    // The quality will decrement by 1 unit in normal conditions
+    decrement := 1
 
-    if itemModel.SellIn <= 0 {
+    // If the sellIn date is due, the decrement will be double than normal
+    if item.Model.SellIn <= 0 {
         decrement *= 2
     }
-    if (itemModel.Quality - decrement) < 0 {
-        itemModel.Quality = 0
-    } else {
-        itemModel.Quality -= decrement
-    }
-    itemModel.SellIn--
 
+    // Decrement quality and force it to 0 if the result is negative
+    if (item.Model.Quality - decrement) < 0 {
+        item.Model.Quality = 0
+    } else {
+        item.Model.Quality -= decrement
+    }
+
+    // Decrement sellIn date
+    item.Model.SellIn--
+
+    // Return no errors
     return nil
 }

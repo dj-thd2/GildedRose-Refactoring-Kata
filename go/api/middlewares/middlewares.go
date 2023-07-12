@@ -8,6 +8,8 @@ var Module = fx.Options(
     fx.Provide(NewContentTypeFilterMiddleware),
 )
 
+// Main middleware base package for dependency injection, define and setup all available middlewares
+
 type IMiddleware interface {
     Setup()
 }

@@ -9,11 +9,13 @@ import (
     "go.uber.org/fx/fxevent"
 )
 
+// Define all available commands for the CLI application
 var cmds = map[string]lib.Command{
     "app:serve": NewServeCommand(),
     "test": NewTextTestFixtureCommand(),
 }
 
+// Return wrapped subcommands
 func GetSubCommands(opt fx.Option) []*cobra.Command {
     var subCommands []*cobra.Command
     for name, command := range cmds {
@@ -22,6 +24,7 @@ func GetSubCommands(opt fx.Option) []*cobra.Command {
     return subCommands
 }
 
+// Wrap each subcommand and call its Setup method to return its information for Cobra library
 func WrapSubCommand(name string, command lib.Command, opt fx.Option) *cobra.Command {
     wrappedCmd := &cobra.Command{
         Use:   name,

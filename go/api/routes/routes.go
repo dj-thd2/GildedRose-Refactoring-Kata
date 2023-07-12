@@ -8,6 +8,8 @@ var Module = fx.Options(
     fx.Provide(NewRoutes),
 )
 
+// Main routes base package for dependency injection, define and setup all available routes
+
 type Routes []Route
 
 type Route interface {

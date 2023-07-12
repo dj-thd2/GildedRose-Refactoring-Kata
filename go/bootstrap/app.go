@@ -5,6 +5,8 @@ import (
     "github.com/spf13/cobra"
 )
 
+// Bootstrap application
+
 var rootCmd = &cobra.Command{
     Use:   "gilded-rose",
     Short: "Clean architecture using gin framework",
